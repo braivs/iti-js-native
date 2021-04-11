@@ -1,7 +1,7 @@
 let students = [
   {
     name: "Bob",
-    age: 22,
+    age: 26,
     isMarried: true,
     scores: 85
   },
@@ -25,15 +25,22 @@ let students = [
 ];
 
 function addYear(st, i) {
-  if(st.age > 25) {
+  if (st.age > 25) {
     console.log(i)
   }
   return {...st, age: st.age + 1}
 }
 
+// неверный путь, когда берём исходный элемент и работаем с исходный. Без копии
+/*function nullFt(st) {
+  st = null
+  return null
+}*/
+
 // Задача увеличить всем студентам возраст
 // копию делаем, чтобы не изменился исходный.
-console.log(students.map(st => ({...st, age: st.age + 1})))
+// console.log(students.map(st => ({...st, age: st.age + 1})))
+console.log(students.map(addYear)) // вариант с отедльной функцией
 
 // напишем свой map
 // исходный массив параметром передаём
@@ -44,8 +51,6 @@ console.log(students.map(st => ({...st, age: st.age + 1})))
   }
   return newArr;
 }*/
-
-console.log(map(students, st => ({...st, age: st.age + 1})))
 
 // рефакторим map
 function map(array, func) {
@@ -58,3 +63,58 @@ function map(array, func) {
   })
   return newArr;
 }
+
+console.log(map(students, st => ({...st, age: st.age + 1})))
+
+// как добавить свойство не испортив исходный массив
+function addProp(elem) {
+  return {...elem, isMarried: false}
+}
+
+// Напишем самодельный фильтр
+function  filter(array, func) {
+  const newArr = []
+  /*for (let i = 0; i < array.length; i++) {
+    if (func(array[i]) === true) {
+      newArr[i] = func(array[i])
+    }
+  }*/
+  // аналоги на ForEach
+  array.forEach(st => {
+    if (func(st) === true) {
+      newArr.push(st)
+    }
+  })
+  return newArr;
+
+}
+
+// Получить неженатых студентов
+function getNotMarriedStudent(st) {
+  return !st.isMarried
+}
+// console.log(filter(students, getNotMarriedStudent))
+// более красиво:
+console.log(filter(students, st => !st.isMarried))
+
+// Напишем свой собственный Find
+/*function find(array, func) {
+  for (let i = 0; i < array.length; i++) {
+    if(func(array[i]) === true) {
+      return array[i]
+    }
+  }
+}*/
+
+// Псевдоистина и псевдоложь
+function find(array, func) {
+  for (let i = 0; i < array.length; i++) {
+    if(func(array[i])) { // false -> 0, '', null, NaN, undefined ([], {}, '' - true)
+      return array[i]
+    }
+  }
+}
+
+// const getAlex = s => s.name === 'Alex'
+const getAlex = s => s.name === 'Alex' && s.age > 20 // если хотим искать по нескольким условияи
+console.log(find(students, getAlex))
